@@ -1,3 +1,133 @@
+/* Fonts */
+@font-face {
+    font-family: "Montserrat";
+    src: url("../font/Montserrat/Montserrat-Medium.ttf");
+}
+
+@font-face {
+    font-family: "Montserrat";
+    src: url("../font/Montserrat/Montserrat-Bold.ttf");
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: "Montserrat";
+    src: url("../font/Montserrat/Montserrat-Italic.ttf");
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "Montserrat";
+    src: url("../font/Montserrat/Montserrat-BoldItalic.ttf");
+    font-weight: bold;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "Open Sans";
+    src: url("../font/Open_Sans/OpenSans-Regular.ttf");
+}
+
+@font-face {
+    font-family: "Open Sans";
+    src: url("../font/Open_Sans/OpenSans-Bold.ttf");
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: "Open Sans";
+    src: url("../font/Open_Sans/OpenSans-Italic.ttf");
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "Open Sans";
+    src: url("../font/Open_Sans/OpenSans-BoldItalic.ttf");
+    font-weight: bold;
+    font-style: italic;
+}
+
+/* Colours:
+ * Coolors Exported Palette - coolors.co/333333-8bc976-4e5166-c6c5b9-706c61
+ *
+ *
+ * name          HEX      30% lighter  30% darker
+ * jet         : #333333  #808080      #000000
+ * pistachio   : #8BC976  #E8F4E4      #41772F
+ * independence: #4E5166  #9B9EB2      #0C0C0F
+ * pale silver : #C6C5B9  #E8E8E3      #7F7D67
+ * dim gray    : #706C61  #BAB7B0      #1E1D1A
+ */
+
 body {
-    background-color: #eee;
+    margin: 0;
+    font-family: 'Open Sans', sans-serif;
+    background-color: #4E5166;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+    color: #4E5166;
+}
+
+a {
+    font-weight: bold;
+    color: #8BC976;
+    text-decoration: none; /* no underline */
+}
+
+#main-nav {
+    background-color: #333;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#main-nav a {
+    text-align: center;
+    padding: 20px;
+}
+
+#main-nav h3 {
+    color: #8BC976;
+}
+
+#main-nav a:hover {
+    color: #E8F4E4;
+    background-color: #0C0C0F;
+    transition: background-color 500ms ease-in-out;
+}
+
+#search-form {
+    display: flex;
+    flex-direction: row;
+}
+
+#search {
+    padding: 10px;
+    border-bottom: 3px solid #4E5166;
+    width: 500px;
+    transition: all .5s ease;
+}
+
+#search-results {
+    z-index: 99;
+    width: 500px;
+    border-radius: 5px;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    background-color: #efefeb;
+}
+
+#search-results a {
+    text-align: left;
+    color: #4E5166;
+    padding: 5px;
+}
+
+#search-results a:hover {
+    background-color: #808080;
+    color: #8BC976;
 }

@@ -121,33 +121,57 @@ def get_releases(artist):
         return []
 
 
-def do_artists(id):
+def artist_fetcher(id):
     return ARTISTS[id]
 
 
-def do_releases(id):
+def release_fetcher(id):
     return RELEASES[id]
 
 
-def do_tracks(id):
+def track_fetcher(id):
     return TRACKS[id]
 
 
 search_result_entity_fetcher = {
-    "artists": do_artists,
-    "releases": do_releases,
-    "tracks": do_tracks,
+    "artists": artist_fetcher,
+    "releases": release_fetcher,
+    "tracks": track_fetcher,
 }
 
 
-def search_results_for(query, stream=True):
+def artist_message(id):
+    return "<small>Artist</small>"
+
+
+def release_message(id):
+    artist = RELEASES[id]['artist']
+    bandname = ARTISTS[artist]['name']
+    return "<small>Release by Artist: " + bandname + "</small>"
+
+
+def track_message(id):
+    release = TRACKS[id]['release']
+    artist = RELEASES[release]['artist']
+    bandname = ARTISTS[artist]['name']
+    return "<small>Track by Artist: " + bandname + "</small>"
+
+
+search_result_message_builder = {
+    "artists": artist_message,
+    "releases": release_message,
+    "tracks": track_message,
+}
+
+
+def search_results_for(query, stream=False):
     # when stream == True, we yield an <a/> for matches over 0.6
     if stream:
         for (k, v) in TEXTINDEX.items():
             match = SequenceMatcher(None, k, query)
             if match.ratio() > 0.6:
-                yield "<a data-score=\"" + str(match.ratio()) + "\" href=\"/" + v['type'] + "/" + v['id'] + "\">" + v[
-                    'name'] + "</a>"
+                yield "<a data-score=\"" + str(match.ratio()) + "\" href=\"/" + v['type'] + "/" + v['id'] + "\"><p>" + \
+                      v['name'] + "</p>" + search_result_message_builder[v['type']](v['id']) + "</a>"
     # If not, we still yield, but we have a cap of 50 results or 3 seconds, whichever comes first
     # Also the results are in a different shape, the one the searc_results.html template expects
     else:

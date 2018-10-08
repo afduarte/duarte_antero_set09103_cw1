@@ -42,14 +42,11 @@ def tracks(id=None):
 @app.route("/search")
 def search():
     query = request.args.get("query", None)
-    stream = request.args.get("stream", True)
-    if stream != "false":
-        print("streaming")
-        return Response(search_results_for(query), mimetype='text/html')
+    stream = request.args.get("stream", False)
+    if stream == "true":
+        return Response(search_results_for(query, stream=True), mimetype='text/html')
     else:
-        print("not streaming")
         results = [x for x in search_results_for(query, stream=False)]
-        print(results)
         return render_template("search_results.html", results=results)
 
 

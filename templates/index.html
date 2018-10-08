@@ -1,50 +1,72 @@
 {% extends 'base.html' %}
 {% block content %}
   <div id="hero">
-    {% for x in hero %}
-      <a href="{{ url_for("artists",id=x['artist']['id']) }}">
-        <div class="hero-item">
-          {% if 'release' in x  and x['release']['cover'] %}
-            {% set front, _ = x['release']['cover'] %}
-            {% if front %}
-              <div class="blurloader">
-                <img src="{{ front }}"/>
-              </div>
+    <h1>Artist Spotlight</h1>
+    <div id="hero-items">
+      {% for x in hero %}
+        <a href="{{ url_for("artists",id=x['artist']['id']) }}">
+          <div class="hero-item">
+            {% if 'release' in x  and x['release']['cover'] %}
+              {% set front, _ = x['release']['cover'] %}
+              {% if front %}
+                <div class="blurloader">
+                  <img src="{{ front }}"/>
+                </div>
+              {% else %}
+                <div class="blurloader">
+                  <img src="{{ url_for("static",filename="img/missing_cover.png") }}"/>
+                </div>
+              {% endif %}
             {% else %}
               <div class="blurloader">
                 <img src="{{ url_for("static",filename="img/missing_cover.png") }}"/>
               </div>
             {% endif %}
-          {% else %}
-            <div class="blurloader">
-              <img src="{{ url_for("static",filename="img/missing_cover.png") }}"/>
-            </div>
-          {% endif %}
 
-          <p>{{ x['artist']['name'] }}</p>
-        </div>
-      </a>
-    {% endfor %}
+            <h4>{{ x['artist']['name'] }}</h4>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
   </div>
 {% endblock %}
 
 {% block extra_style %}
   <style>
-    #hero {
+    #hero h1 {
+      text-align: center;
+      color: #8BC976;
+    }
+
+    #hero-items {
       display: flex;
       flex-direction: row;
       justify-content: center;
+      padding-bottom: 20px;
     }
 
     .hero-item {
       text-align: center;
       width: 250px;
+      min-height: 300px;
       margin: 0 10px;
+      padding: 10px;
+      background-color: #efefeb;
+      border-radius: 5px;
     }
 
-    .blurloader {
+    .hero-item .blurloader {
       height: 250px;
     }
 
+    .hero-item img {
+      filter: grayscale(20%);
+      transition: filter 200ms linear, transform 200ms linear;
+    }
+
+    .hero-item:hover img {
+      filter: grayscale(0);
+      transform: scale(1.05);
+    }
   </style>
 {% endblock %}
