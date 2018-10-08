@@ -2,7 +2,7 @@
 {% block content %}
   <div id="hero">
     {% for x in hero %}
-      <a href="{{ url_for("artist",id=x['artist']['id']) }}">
+      <a href="{{ url_for("artists",id=x['artist']['id']) }}">
         <div class="hero-item">
           {% if 'release' in x  and x['release']['cover'] %}
             {% set front, _ = x['release']['cover'] %}

@@ -1,5 +1,6 @@
 from settings import DATA_DIR
 from flask import url_for
+import time
 import csv
 from difflib import SequenceMatcher
 
@@ -62,7 +63,7 @@ with open(DATA_DIR + "/releases.csv") as file:
             cover=(row[5], row[6])
         )
         RELEASES[r["id"]] = r
-        # Indicies
+        # Indices
         # Text index
         TEXTINDEX[r['name']] = {
             "id": r['id'],
@@ -120,10 +121,44 @@ def get_releases(artist):
         return []
 
 
-def search_results_for(query):
-    for (k, v) in TEXTINDEX.items():
-        match = SequenceMatcher(None, k, query)
-        print(query, match.ratio(), k)
-        if match.ratio() > 0.6:
-            yield "<a data-score=\"" + str(match.ratio()) + "\" href=\"/" + v['type'] + "/" + v['id'] + "\">" + v[
-                'name'] + "</a>"
+def do_artists(id):
+    return ARTISTS[id]
+
+
+def do_releases(id):
+    return RELEASES[id]
+
+
+def do_tracks(id):
+    return TRACKS[id]
+
+
+search_result_entity_fetcher = {
+    "artists": do_artists,
+    "releases": do_releases,
+    "tracks": do_tracks,
+}
+
+
+def search_results_for(query, stream=True):
+    # when stream == True, we yield an <a/> for matches over 0.6
+    if stream:
+        for (k, v) in TEXTINDEX.items():
+            match = SequenceMatcher(None, k, query)
+            if match.ratio() > 0.6:
+                yield "<a data-score=\"" + str(match.ratio()) + "\" href=\"/" + v['type'] + "/" + v['id'] + "\">" + v[
+                    'name'] + "</a>"
+    # If not, we still yield, but we have a cap of 50 results or 3 seconds, whichever comes first
+    # Also the results are in a different shape, the one the searc_results.html template expects
+    else:
+        count = 0
+        start_time = time.time()
+        for (k, v) in TEXTINDEX.items():
+            # Break if we have more than 50 results or 3 seconds have passed
+            if count >= 50 or (time.time() - start_time > 3):
+                break
+            match = SequenceMatcher(None, k, query)
+            if match.ratio() > 0.4:
+                entity = search_result_entity_fetcher[v['type']](v['id'])
+                count += 1
+                yield dict(score=match.ratio(), type=v['type'], entity=entity)
