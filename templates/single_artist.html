@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div id="artist-page" class="main-content">
+    <div id="artist">
+      {% if releases %}
+        {% set front, _ = releases[0]['cover'] %}
+        {% if front %}
+          <div class="cover blurloader">
+            <img src="{{ front }}"/>
+          </div>
+        {% else %}
+          <div class="cover blurloader">
+            <img src="{{ url_for("static",filename="img/missing_cover.png") }}"/>
+          </div>
+        {% endif %}
+      {% else %}
+        <div class="cover blurloader">
+          <img src="{{ url_for("static",filename="img/missing_cover.png") }}"/>
+        </div>
+      {% endif %}
+      {% set begin, end = artist['lifespan'] %}
+      <h2>{{ artist['name'] }}</h2>
+      <h4>{{ begin }} - {{ end if end else "now" }}</h4>
+    </div>
+    <div id="releases">
+      {% for r in releases %}
+        <h3>{{ r['name'] }}</h3>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_style %}
+  <style>
+    #artist-page {
+      display: grid;
+      grid-template-columns: 1fr 3fr 5fr 1fr;
+    }
+
+    #artist {
+      grid-column: 2;
+    }
+
+    #releases {
+      grid-column: 3;
+    }
+
+    #artist {
+      max-width: 300px;
+    }
+
+    .cover {
+      max-height: 300px;
+    }
+  </style>
+{% endblock %}

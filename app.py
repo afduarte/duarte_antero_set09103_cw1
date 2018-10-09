@@ -24,7 +24,13 @@ def index():
 @app.route("/artists", methods=['GET'])
 @app.route("/artists/<string:id>", methods=['GET'])
 def artists(id=None):
-    return "Artist id is: " + str(id)
+    if id is None:
+        letter = request.args.get("l", "a")
+        artists = [a for (k, a) in ARTISTS.items() if a['name'].lower().startswith(letter)]
+        return render_template("artists.html", artists=artists)
+    artist = ARTISTS[id]
+    releases = [RELEASES[x] for x in get_releases(artist)]
+    return render_template("single_artist.html", artist=artist, releases=releases)
 
 
 @app.route("/releases", methods=['GET'])

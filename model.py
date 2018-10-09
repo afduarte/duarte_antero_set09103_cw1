@@ -13,6 +13,7 @@ TRACKS = {}
 # Index artists to their releases
 ARTIST_TO_RELEASES = {}
 ARTIST_TO_TRACKS = {}
+RELEASE_TO_TRACKS = {}
 TEXTINDEX = {}
 
 with open(DATA_DIR + "/artists.csv") as file:
@@ -111,16 +112,28 @@ with open(DATA_DIR + "/tracks.csv") as file:
         else:
             ARTIST_TO_TRACKS[t["artist"]] = [t["id"]]
 
+        # Index to release
+        if t["release"] in RELEASE_TO_TRACKS:
+            RELEASE_TO_TRACKS[t["release"]].append(t["id"])
+        else:
+            RELEASE_TO_TRACKS[t["release"]] = [t["id"]]
+
 
 def get_releases(artist):
-    # add 1 random release for each artist
-    # if the artist has indexed releases
     if artist['id'] in ARTIST_TO_RELEASES:
         return ARTIST_TO_RELEASES[artist['id']]
     else:
         return []
 
 
+def get_tracks(release):
+    if release['id'] in RELEASE_TO_TRACKS:
+        return RELEASE_TO_TRACKS[release['id']]
+    else:
+        return []
+
+
+# Lookup entities in their specific dicts
 def artist_fetcher(id):
     return ARTISTS[id]
 
@@ -140,6 +153,7 @@ search_result_entity_fetcher = {
 }
 
 
+# Generate messages for different entity types
 def artist_message(id):
     return "<small>Artist</small>"
 
@@ -164,6 +178,8 @@ search_result_message_builder = {
 }
 
 
+# Search in the TEXTINDEX for the best matches
+# Output is streamed by using a generator function
 def search_results_for(query, stream=False):
     # when stream == True, we yield an <a/> for matches over 0.6
     if stream:

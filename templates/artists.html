@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div id="search" class="main-content">
+    <ul>
+      {% for a in artists|sort(attribute='name') %}
+        <li>
+          <a href="{{ url_for("artists",id=a['id']) }}">
+            <h4>{{ a['name'] }}</h4>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}
