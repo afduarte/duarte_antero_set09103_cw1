@@ -1,14 +1,78 @@
 {% extends 'base.html' %}
 {% block content %}
-  <div id="search" class="main-content">
-    <ul>
-      {% for a in artists|sort(attribute='name') %}
-        <li>
-          <a href="{{ url_for("artists",id=a['id']) }}">
-            <h4>{{ a['name'] }}</h4>
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
+  <div id="artist-page" class="main-content">
+    <div id="letters">
+      <ul>
+        {% for letter in alphabet %}
+          <li><a href="{{ url_for("artists",l=letter) }}"><h3>{{ letter }}</h3></a></li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div id="artists">
+      <ul>
+        {% for artist,release in artists %}
+          <li>
+            <a href="{{ url_for("artists",id=artist['id']) }}">
+              <div class="artist-container">
+                {% if release %}
+                  {% set front, _ = release['cover'] %}
+                  {% if front %}
+                    <div class="cover blurloader">
+                      <img src="{{ front }}"/>
+                    </div>
+                  {% else %}
+                    <div class="cover blurloader">
+                      <img src="{{ url_for("static",filename="img/missing_cover.png") }}"/>
+                    </div>
+                  {% endif %}
+                {% else %}
+                  <div class="cover blurloader">
+                    <img src="{{ url_for("static",filename="img/missing_cover.png") }}"/>
+                  </div>
+                {% endif %}
+                <h3>{{ artist['name'] }}</h3>
+              </div>
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
   </div>
+{% endblock %}
+
+{% block extra_style %}
+  <style>
+    #artist-page {
+      display: grid;
+      grid-template-columns: 1fr 10fr 1fr;
+    }
+
+    #letters, #artists {
+      grid-column: 2;
+    }
+
+    #letters {
+      margin: 0 300px
+    }
+
+    #letters ul {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+    }
+
+    #artists ul {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      flex-wrap: wrap;
+    }
+
+    .artist-container {
+      width: 20em;
+      height: 20em;
+      margin: 2em;
+      text-align: center;
+    }
+  </style>
 {% endblock %}

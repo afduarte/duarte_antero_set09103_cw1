@@ -76,6 +76,10 @@ a {
     text-decoration: none; /* no underline */
 }
 
+li {
+    list-style: none;
+}
+
 #main-nav {
     background-color: #4E5166;
     display: flex;
