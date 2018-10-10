@@ -1,20 +1,20 @@
 {% extends 'base.html' %}
-{% block title %}Browse Artists{% endblock %}
+{% block title %}Browse Releases{% endblock %}
 {% block content %}
-  <div id="artist-page" class="main-content">
+  <div id="release-page" class="main-content">
     <div id="letters">
       <ul>
         {% for letter,_ in alphabet %}
           <li>
-            <a href="{{ url_for("artists",l=letter) }}"><h3>{{ letter | upper }}</h3></a>
+            <a href="{{ url_for("releases",l=letter) }}"><h3>{{ letter | upper }}</h3></a>
           </li>
         {% endfor %}
       </ul>
     </div>
-    <div id="artists">
-      {% for artist,release in artists %}
-        <a href="{{ url_for("artists",id=artist['id']) }}">
-          <div class="artist-container">
+    <div id="releases">
+      {% for release in releases %}
+        <a href="{{ url_for("releases",id=release['id']) }}">
+          <div class="release-container">
             {% if release %}
               {% set front, _ = release['cover'] %}
               {% if front %}
@@ -31,7 +31,7 @@
                 <img src="{{ url_for("static",filename="img/missing_cover.png") }}"/>
               </div>
             {% endif %}
-            <h3>{{ artist['name'] }}</h3>
+            <h3>{{ release['name'] }}</h3>
           </div>
         </a>
       {% endfor %}
@@ -53,19 +53,19 @@
       justify-content: space-around;
     }
 
-    #artists {
+    #releases {
       margin: 0 20%;
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       grid-gap: 3em;
     }
 
-    .artist-container {
+    .release-container {
       width: 100%;
       text-align: center;
     }
 
-    .artist-container .cover {
+    .release-container .cover {
       min-width: 200px;
       min-height: 200px;
     }

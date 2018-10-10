@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block title %}{{ release['name'] }}{% endblock %}
+{% block content %}
+  <div id="release-page" class="main-content">
+    <div id="release">
+      {% set front, _ = release['cover'] %}
+      {% if front %}
+        <div class="cover blurloader">
+          <img src="{{ front }}"/>
+        </div>
+      {% else %}
+        <div class="cover blurloader">
+          <img src="{{ url_for("static",filename="img/missing_cover.png") }}"/>
+        </div>
+      {% endif %}
+      <h2>{{ release['name'] }}</h2>
+      <h4>{{ release['reldate'] if release['reldate'] else "-" }}</h4>
+    </div>
+    <div id="tracks">
+      {% for t in tracks %}
+        {% set class = "highlight" if t['id'] == highlight else "" %}
+        {% set position =  t['position'] if t['position'] != -1 else "" %}
+        {% set milliseconds = t['duration'] if 'duration' in t else 0 %}
+        {% set seconds = milliseconds / 1000 %}
+        {% set minutes = seconds / 60 %}
+        {% set duration = (minutes % 60) | round | int | string +":"+ (seconds % 60) | round | int | string %}
+        <h3 class="{{ class }}">{{ position }} - {{ t['name'] }} ({{ duration }})</h3>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_style %}
+  <style>
+    #release-page {
+      display: grid;
+      grid-template-columns: 1fr 3fr 5fr 1fr;
+    }
+
+    #release {
+      grid-column: 2;
+      max-width: 300px;
+    }
+
+    #tracks {
+      grid-column: 3;
+    }
+
+    .cover {
+      height: 300px;
+    }
+
+    .highlight {
+      animation: flash 2s forwards linear normal;
+    }
+
+    @keyframes flash {
+      0% {
+        background-color: rgba(238, 238, 238, 0);
+      }
+
+      25% {
+        background-color: rgba(238, 238, 238, 1);
+      }
+
+      50% {
+        background-color: rgba(238, 238, 238, 0.5);
+      }
+
+      75% {
+        background-color: rgba(238, 238, 238, 0.25);
+      }
+
+      100% {
+        background: none;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script>
+      /*setTimeout(function () {
+          var hilites = document.querySelectorAll(".highlight")
+          for (var h in hilites) {
+              if (hilites[h] && hilites[h].classList) {
+                  hilites[h].classList.remove("highlight")
+              }
+          }
+      }, 1000)*/
+  </script>
+{% endblock %}

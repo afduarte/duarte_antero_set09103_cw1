@@ -16,6 +16,16 @@ ARTIST_TO_TRACKS = {}
 RELEASE_TO_TRACKS = {}
 TEXTINDEX = {}
 
+# List the first character in the bands' names so we can generate a list in the frontend
+# The reason why we need this is some bands have decided to call themselves weird stuff
+# like numbers or special characters
+# seriously... "!!!" is a band name
+
+LETTERS = {}
+
+# Same for releases
+RELEASE_LETTERS = {}
+
 with open(DATA_DIR + "/artists.csv") as file:
     reader = csv.reader(file, delimiter=',', quotechar='"')
     # skip headers
@@ -40,6 +50,9 @@ with open(DATA_DIR + "/artists.csv") as file:
             "type": "artists",
             "name": a['name']
         }
+        # Add the first letter to the index
+        first = a['name'][0].lower()
+        LETTERS[first] = (LETTERS[first] + 1) if first in LETTERS else 1
 
 with open(DATA_DIR + "/releases.csv") as file:
     reader = csv.reader(file, delimiter=',', quotechar='"')
@@ -77,6 +90,10 @@ with open(DATA_DIR + "/releases.csv") as file:
         else:
             ARTIST_TO_RELEASES[r["artist"]] = [r["id"]]
 
+        # Add the first letter to the index
+        first = r['name'][0].lower()
+        RELEASE_LETTERS[first] = (RELEASE_LETTERS[first] + 1) if first in RELEASE_LETTERS else 1
+
 with open(DATA_DIR + "/tracks.csv") as file:
     reader = csv.reader(file, delimiter=',', quotechar='"')
     # skip headers
@@ -94,8 +111,8 @@ with open(DATA_DIR + "/tracks.csv") as file:
             release=row[0],
             format=row[1],
             name=row[3],
-            position=row[4],
-            duration=row[5]
+            position=int(row[4]) if row[4] != "" else -1,
+            duration=int(row[5]) if row[5] != "null" else 0
         )
         t["artist"] = RELEASES[t["release"]]["artist"]
         TRACKS[t["id"]] = t
@@ -168,7 +185,7 @@ def track_message(id):
     release = TRACKS[id]['release']
     artist = RELEASES[release]['artist']
     bandname = ARTISTS[artist]['name']
-    return "<small>Track by Artist: " + bandname + "</small>"
+    return "<small>Track by Artist: " + bandname + ", in " + RELEASES[release]['name'] + "</small>"
 
 
 search_result_message_builder = {
@@ -186,8 +203,15 @@ def search_results_for(query, stream=False):
         for (k, v) in TEXTINDEX.items():
             match = SequenceMatcher(None, k, query)
             if match.ratio() > 0.6:
-                yield "<a data-score=\"" + str(match.ratio()) + "\" href=\"/" + v['type'] + "/" + v['id'] + "\"><p>" + \
-                      v['name'] + "</p>" + search_result_message_builder[v['type']](v['id']) + "</a>"
+                if v['type'] == 'tracks':
+                    t = TRACKS[v['id']]
+                    yield '<a data-score="' + str(match.ratio()) + '" href="/releases/' + t[
+                        'release'] + '?highlight=' + v['id'] + '"><p>' + \
+                          v['name'] + "</p>" + search_result_message_builder[v['type']](v['id']) + "</a>"
+                else:
+                    yield '<a data-score="' + str(match.ratio()) + '" href="/' + v['type'] + "/" + v[
+                        'id'] + '"><p>' + \
+                          v['name'] + "</p>" + search_result_message_builder[v['type']](v['id']) + "</a>"
     # If not, we still yield, but we have a cap of 50 results or 3 seconds, whichever comes first
     # Also the results are in a different shape, the one the searc_results.html template expects
     else:

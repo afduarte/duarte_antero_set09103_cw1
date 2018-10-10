@@ -1,32 +1,35 @@
 {% extends 'base.html' %}
+{% block title %}Home{% endblock %}
 {% block content %}
-  <div id="hero">
-    <h1>Artist Spotlight</h1>
-    <div id="hero-items">
-      {% for x in hero %}
-        <a href="{{ url_for("artists",id=x['artist']['id']) }}">
-          <div class="hero-item">
-            {% if 'release' in x  and x['release']['cover'] %}
-              {% set front, _ = x['release']['cover'] %}
-              {% if front %}
-                <div class="blurloader">
-                  <img src="{{ front }}"/>
-                </div>
+  <div class="main-content">
+    <div id="hero">
+      <h1>Artist Spotlight</h1>
+      <div id="hero-items">
+        {% for x in hero %}
+          <a href="{{ url_for("artists",id=x['artist']['id']) }}">
+            <div class="hero-item">
+              {% if 'release' in x  and x['release']['cover'] %}
+                {% set front, _ = x['release']['cover'] %}
+                {% if front %}
+                  <div class="blurloader">
+                    <img src="{{ front }}"/>
+                  </div>
+                {% else %}
+                  <div class="blurloader">
+                    <img src="{{ url_for("static",filename="img/missing_cover.png") }}"/>
+                  </div>
+                {% endif %}
               {% else %}
                 <div class="blurloader">
                   <img src="{{ url_for("static",filename="img/missing_cover.png") }}"/>
                 </div>
               {% endif %}
-            {% else %}
-              <div class="blurloader">
-                <img src="{{ url_for("static",filename="img/missing_cover.png") }}"/>
-              </div>
-            {% endif %}
 
-            <h4>{{ x['artist']['name'] }}</h4>
-          </div>
-        </a>
-      {% endfor %}
+              <h4>{{ x['artist']['name'] }}</h4>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
     </div>
   </div>
 {% endblock %}

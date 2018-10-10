@@ -1,8 +1,9 @@
 import datetime
 import operator
 import random
-from flask import Flask, request, render_template, Response
-from model import ARTISTS, RELEASES, ARTIST_TO_RELEASES, get_releases, search_results_for
+from flask import Flask, request, render_template, Response, abort
+from model import ARTISTS, RELEASES, TRACKS, ARTIST_TO_RELEASES, LETTERS, RELEASE_LETTERS, get_releases, get_tracks, \
+    search_results_for
 
 app = Flask(__name__)
 app.template_folder = 'templates'
@@ -29,13 +30,16 @@ def artists(id=None):
     # If there is no ID, render the artist browsing page
     if id is None:
         letter = request.args.get("l", "a")
-        artists = [a for (k, a) in ARTISTS.items() if a['name'].lower().startswith(letter.lower())]
+        artists = [a for (k, a) in ARTISTS.items() if a['name'].lower().startswith(letter)]
         artists.sort(key=operator.itemgetter('name'))
         artist_tuples = []
         for a in artists:
             releases = sorted([RELEASES[x] for x in get_releases(a)], key=operator.itemgetter('reldate'))
             artist_tuples.append((a, releases[0] if releases else None))
-        return render_template("artists.html", artists=artist_tuples, alphabet=map(chr, range(65, 91)))
+        sorted_alphabet = sorted(LETTERS.items(), key=operator.itemgetter(0))
+        return render_template("artists.html", artists=artist_tuples, alphabet=sorted_alphabet)
+    if id not in ARTISTS:
+        return abort(404)
     # Otherwise, render the single artist page
     artist = ARTISTS[id]
     releases = [RELEASES[x] for x in get_releases(artist)]
@@ -48,13 +52,25 @@ def artists(id=None):
 @app.route("/releases", methods=['GET'])
 @app.route("/releases/<string:id>", methods=['GET'])
 def releases(id=None):
-    return "Release id is: " + str(id)
+    # If there is no ID, render the release browsing page
+    if id is None:
+        letter = request.args.get("l", "a")
+        releases = [r for (k, r) in RELEASES.items() if r['name'].lower().startswith(letter)]
+        releases.sort(key=operator.itemgetter('name'))
 
-
-@app.route("/tracks", methods=['GET'])
-@app.route("/tracks/<string:id>", methods=['GET'])
-def tracks(id=None):
-    return "Track id is: " + str(id)
+        sorted_alphabet = sorted(RELEASE_LETTERS.items(), key=operator.itemgetter(0))
+        return render_template("releases.html", releases=releases, alphabet=sorted_alphabet)
+    if id not in RELEASES:
+        return abort(404)
+    # Otherwise, render the single artist page
+    release = RELEASES[id]
+    tracks = [TRACKS[x] for x in get_tracks(release)]
+    # Get the highlighted track if this page was reached by clicking a search result
+    highlight = request.args.get("highlight", None)
+    # Sort by ascending release date
+    # No problem with sorting in place since this list was created for this purpose
+    tracks.sort(key=operator.itemgetter("position"))
+    return render_template("single_release.html", release=release, tracks=tracks, highlight=highlight)
 
 
 @app.route("/search")
@@ -66,6 +82,11 @@ def search():
     else:
         results = [x for x in search_results_for(query, stream=False)]
         return render_template("search_results.html", results=results)
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 
 if __name__ == " __main__ ":
