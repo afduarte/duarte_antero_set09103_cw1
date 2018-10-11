@@ -201,6 +201,7 @@ li {
 }
 
 #setlist {
+    padding-top: 110px;
     position: fixed;
     right: 0;
     top: 0;
@@ -213,4 +214,9 @@ li {
 
 #setlist.open {
     width: 25%
+}
+
+.setlist-changer {
+    display: flex;
+    flex-direction: row;
 }

@@ -28,10 +28,9 @@
   </div>
 </nav>
 {% block content %} {% endblock %}
-<div id="setlist"></div>
+<div id="setlist">{% include "setlist.html" %}</div>
 <script src="{{ url_for("static",filename="js/img-blurloader.js") }}"></script>
-{% block extra_scripts %}
-  <script src="{{ url_for("static",filename="js/main.js") }}"></script>
-{% endblock %}
+<script src="{{ url_for("static",filename="js/main.js") }}"></script>
+{% block extra_scripts %}{% endblock %}
 </body>
 </html>

@@ -20,11 +20,13 @@
       {% for t in tracks %}
         {% set class = "highlight" if t['id'] == highlight else "" %}
         {% set position =  t['position'] if t['position'] != -1 else "" %}
-        {% set milliseconds = t['duration'] if 'duration' in t else 0 %}
-        {% set seconds = milliseconds / 1000 %}
-        {% set minutes = seconds / 60 %}
-        {% set duration = (minutes % 60) | round | int | string +":"+ (seconds % 60) | round | int | string %}
-        <h3 class="{{ class }}">{{ position }} - {{ t['name'] }} ({{ duration }})</h3>
+        <div class="track setlist-changer">
+          <form id="add_{{ t['id'] }}" method="post" action="{{ url_for("setlist_update",track=t['id']) }}">
+            <input type="hidden" name="_method" value="POST"/>
+            <button type="submit"><i class="icono-plus"></i></button>
+          </form>
+          <h3 class="{{ class }}">{{ position }} - {{ t['name'] }} ({{ t['duration'] | duration }})</h3>
+        </div>
       {% endfor %}
     </div>
   </div>

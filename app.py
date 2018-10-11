@@ -1,12 +1,31 @@
 import datetime
 import operator
 import random
-from flask import Flask, request, render_template, Response, abort
+from settings import APP_SECRET
+from flask import Flask, request, render_template, Response, abort, session
 from model import ARTISTS, RELEASES, TRACKS, ARTIST_TO_RELEASES, LETTERS, RELEASE_LETTERS, get_releases, get_tracks, \
     search_results_for
 
 app = Flask(__name__)
 app.template_folder = 'templates'
+app.secret_key = APP_SECRET
+
+
+# Define a filter to be used in templates to convert a song's duration into a readable string
+@app.template_filter()
+def duration(time=0):
+    seconds = time / 1000
+    minutes = seconds / 60
+    return str(int(minutes % 60)).zfill(2) + ":" + str(int(seconds % 60)).zfill(2)
+
+
+@app.template_filter()
+def sortedvalues(value, key):
+    if not value:
+        return []
+    print(value)
+    print(key)
+    return sorted(value.values(), key=operator.itemgetter(key))
 
 
 @app.route("/", methods=['GET'])
@@ -71,6 +90,44 @@ def releases(id=None):
     # No problem with sorting in place since this list was created for this purpose
     tracks.sort(key=operator.itemgetter("position"))
     return render_template("single_release.html", release=release, tracks=tracks, highlight=highlight)
+
+
+@app.route("/setlist", methods=['GET'])
+def setlist():
+    print(session)
+    return render_template("setlist.html")
+
+
+# Better semantics could have been achieved here with PUT and DELETE
+# But HTML does not support PUT or DELETE as methods in form
+# So in order to maintain functionality without javascript
+# (AJAX supports PUT and DELETE)
+# a decision was made that the request woud always be a POST and
+# the '_method' hidden field dictates what action should be taken
+# With a default of add
+@app.route("/setlist/<string:track>", methods=['POST'])
+def setlist_update(track):
+    print("UPDATING SETLIST")
+    current_setlist = session.pop("setlist", {})
+    method = request.form.get('_method', "POST")
+    if method == 'DELETE':
+        if track not in current_setlist:
+            return "Track not in setlist, not able to delete", 400
+        else:
+            print("DELETING " + track)
+            del current_setlist[track]
+            session['setlist'] = current_setlist
+            return request.referrer, 204
+    elif method == 'POST':
+        if track in TRACKS:
+            print("ADDING " + track)
+            current_setlist[track] = {"track": TRACKS[track], "weight": len(current_setlist)}
+            session['setlist'] = current_setlist
+            return request.referrer, 204
+        else:
+            return "Track not found, not able to add to setlist", 400
+    else:
+        return "Unknown method '" + method + "'", 400
 
 
 @app.route("/search")
