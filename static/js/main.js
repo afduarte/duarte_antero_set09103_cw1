@@ -45,3 +45,18 @@ search.addEventListener('focus', function () {
     datalist.style.opacity = "1";
     datalist.style.display = "flex";
 });
+
+var setlistBtn = document.getElementById("setlist-opener");
+var setlist = document.getElementById("setlist");
+
+setlistBtn.addEventListener('click', function () {
+    if (setlist.classList.contains('open')) {
+        setlist.classList.remove('open');
+        setlistBtn.style.width = '5em';
+    } else {
+        setlist.classList.add('open');
+        // We have to use 25% of the body width here, since setlist's width is still 0
+        var width = document.body.clientWidth / 4;
+        setlistBtn.style.width = width + 'px';
+    }
+});

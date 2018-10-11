@@ -11,9 +11,11 @@
 </head>
 <body>
 <nav id="main-nav">
-  <a href="{{ url_for("index") }}"><h3>Home</h3></a>
-  <a href="{{ url_for("artists") }}"><h3>Browse Artists</h3></a>
-  <a href="{{ url_for("releases") }}"><h3>Browse Releases</h3></a>
+  <div id="links">
+    <a href="{{ url_for("index") }}"><h3>Home</h3></a>
+    <a href="{{ url_for("artists") }}"><h3>Browse Artists</h3></a>
+    <a href="{{ url_for("releases") }}"><h3>Browse Releases</h3></a>
+  </div>
   <form id="search-form" action="{{ url_for("search",stream="false") }}" method="get">
     <div class="search-input">
       <input id="search" name="query" placeholder="Search..." type="search" autocomplete="off"/>
@@ -21,9 +23,12 @@
     </div>
     <button type="submit"><i id="search-icon" class="icono-search"></i></button>
   </form>
+  <div id="setlist-opener">
+    <button><i class="icono-hamburger"></i></button>
+  </div>
 </nav>
 {% block content %} {% endblock %}
-
+<div id="setlist"></div>
 <script src="{{ url_for("static",filename="js/img-blurloader.js") }}"></script>
 {% block extra_scripts %}
   <script src="{{ url_for("static",filename="js/main.js") }}"></script>
