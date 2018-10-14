@@ -6,7 +6,7 @@
       {% for r in results|sort(attribute='score', reverse=True) %}
         <li data-score="{{ r['score'] }}">
           <a href="{{ url_for(r['type'],id=r['entity']['id']) }}">
-            <p>{{ r['entity']['name'] }}</p>
+            <p title="{{ r['entity']['name'] }}" class="ellipse">{{ r['entity']['name'] }}</p>
           </a>
         </li>
       {% endfor %}

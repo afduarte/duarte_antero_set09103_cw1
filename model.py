@@ -135,6 +135,33 @@ with open(DATA_DIR + "/tracks.csv") as file:
         else:
             RELEASE_TO_TRACKS[t["release"]] = [t["id"]]
 
+with open(DATA_DIR + "/acousticbrainz.csv") as file:
+    reader = csv.reader(file, delimiter=',', quotechar='"')
+    # skip headers
+    next(reader)
+    for row in reader:
+        # Add acoustic data to the dict, using their musicbrainz id as the key.
+        # csv headers: ["id","bpm","loudness","chordchange","chordkey","songkey","keystrenght"]
+        # All data was validated on creation, so there's no need to validate here.
+        # We store the id of a tracks's release, rather than a pointer to it in RELEASES
+        # to simulate a case where looking it up would be expensive (e.g: database)
+
+        # We index using track
+        ac = dict(
+            id=row[0],
+            bpm=row[1],
+            loudness=row[2],
+            chord_change_rate=row[3],
+            chord_key=row[4],
+            song_key=row[5],
+            key_strength=row[6]
+        )
+
+        ACOUSTICS[ac["id"]] = ac
+        # Indices
+        # ACOUSTICS doesn't need indices because it uses the same ID as tracks
+        # and it's already an O(1) lookup between them
+
 
 def get_releases(artist):
     if artist['id'] in ARTIST_TO_RELEASES:

@@ -87,6 +87,12 @@ li {
     border-bottom: 2px solid #EB6C13;
 }
 
+.ellipse {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 #main-nav {
     z-index: 100;
     position: fixed;

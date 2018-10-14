@@ -8,7 +8,8 @@
           <input type="hidden" name="_action" value="remove"/>
           <button type="submit"><i class="icono-cross"></i></button>
         </form>
-        <h3>{{ weight }}{{ track['name'] }} ({{ track['duration'] | duration }})</h3>
+        <h3 title="{{ track['name'] }}" class="ellipse">{{ weight }}{{ track['name'] }}
+          ({{ track['duration'] | duration }})</h3>
       </li>
     {% endfor %}
   </ul>
