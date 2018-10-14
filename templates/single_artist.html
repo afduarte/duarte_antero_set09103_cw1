@@ -4,16 +4,9 @@
   <div id="artist-page" class="main-content">
     <div id="artist">
       {% if releases %}
-        {% set front, _ = releases[0]['cover'] %}
-        {% if front %}
-          <div class="cover blurloader">
-            <img src="{{ front }}"/>
-          </div>
-        {% else %}
-          <div class="cover blurloader">
-            <img src="{{ url_for("static",filename="img/missing_cover.png") }}"/>
-          </div>
-        {% endif %}
+        <div class="cover blurloader">
+          <img src="{{ releases[0]['cover'][0] | default(url_for("static",filename="img/missing_cover.png")) }}"/>
+        </div>
       {% else %}
         <div class="cover blurloader">
           <img src="{{ url_for("static",filename="img/missing_cover.png") }}"/>
@@ -23,9 +16,17 @@
       <h2>{{ artist['name'] }}</h2>
       <h4>{{ begin }} - {{ end if end else "now" }}</h4>
     </div>
-    <div id="releases">
+    <div id="releases" class="line-item-list">
+      {% if not releases %}
+        <h3>Sorry, no releases for this artist, <a href="{{ url_for("artists") }}">look at another one?</a></h3>
+      {% endif %}
       {% for r in releases %}
-        <a href="{{ url_for("releases",id=r['id']) }}"><h3>{{ r['name'] }}</h3></a>
+        <a href="{{ url_for("releases",id=r['id']) }}">
+          <div class="release line-item">
+            <img src="{{ r['cover'][0] | default(url_for("static",filename="img/missing_cover.png")) }}"/>
+            <h3> {{ r['reldate'][0:4] | default("?") }} - {{ r['name'] }}</h3>
+          </div>
+        </a>
       {% endfor %}
     </div>
   </div>
@@ -52,6 +53,25 @@
 
     .cover {
       height: 300px;
+    }
+
+    .cover img {
+      box-shadow: 5px 5px 20px 10px #323544;
+    }
+
+    .release {
+      max-width: 500px;
+    }
+
+    .release img {
+      margin: 5px;
+      width: 60px;
+    }
+
+    .release h3 {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   </style>
 {% endblock %}

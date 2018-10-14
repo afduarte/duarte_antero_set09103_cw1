@@ -95,6 +95,7 @@ setlistBtn.addEventListener('click', toggleSidebar);
 changeSidebar(LocalStorage.getItemOrElse("sidebar.open", false));
 
 addListenersToSetlistButtons('#tracks');
+addListenersToSetlistButtons('#setlist');
 
 function addListenersToSetlistButtons(where) {
     document.querySelectorAll(`${where} .setlist-changer button`)

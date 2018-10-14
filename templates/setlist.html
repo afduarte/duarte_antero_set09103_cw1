@@ -3,12 +3,12 @@
     {% for t in session['setlist'] | sortedvalues("weight") %}
       {% set track = t['track'] %}
       {% set weight = t['weight'] + 1 %}
-      <li class="setlist-changer">
+      <li class="line-item setlist-changer">
         <form action="{{ url_for("setlist_update",track=track['id']) }}" method="POST">
           <input type="hidden" name="_action" value="remove"/>
           <button type="submit"><i class="icono-cross"></i></button>
         </form>
-        <p>{{ weight }}{{ track['name'] }} ({{ track['duration'] | duration }})</p>
+        <h3>{{ weight }}{{ track['name'] }} ({{ track['duration'] | duration }})</h3>
       </li>
     {% endfor %}
   </ul>

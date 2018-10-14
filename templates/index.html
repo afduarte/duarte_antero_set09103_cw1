@@ -36,16 +36,20 @@
 
 {% block extra_style %}
   <style>
+    #hero h1 {
+      color: #EB6C13;
+    }
+
     #hero h1, #hero h4 {
       text-align: center;
-      color: #8BC976;
     }
 
     #hero-items {
       display: flex;
       flex-direction: row;
       justify-content: center;
-      padding-bottom: 20px;
+      padding: 20px 0;
+      background-color: #4E5166;
     }
 
     .hero-item {
@@ -54,7 +58,6 @@
       min-height: 300px;
       margin: 0 10px;
       padding: 10px;
-      background-color: #4E5166;
       border-radius: 5px;
     }
 

@@ -15,12 +15,13 @@
       {% endif %}
       <h2>{{ release['name'] }}</h2>
       <h4>{{ release['reldate'] if release['reldate'] else "-" }}</h4>
+      <a href="{{ url_for("artists",id=artist['id']) }}"><h4>More by {{ artist['name'] }}</h4></a>
     </div>
-    <div id="tracks">
+    <div id="tracks" class="line-item-list">
       {% for t in tracks %}
         {% set class = "highlight" if t['id'] == highlight else "" %}
         {% set position =  t['position'] if t['position'] != -1 else "" %}
-        <div class="track setlist-changer">
+        <div class="line-item track setlist-changer">
           <form method="post" action="{{ url_for("setlist_update",track=t['id']) }}">
             <input type="hidden" name="_action" value="add"/>
             <button type="submit"><i class="icono-plus"></i></button>
@@ -44,12 +45,28 @@
       max-width: 300px;
     }
 
+    #release a h4 {
+      color: #EB6C13;
+    }
+
     #tracks {
       grid-column: 3;
     }
 
+    .track {
+      max-width: 500px;
+    }
+
+    .track button {
+      margin-right: 5px;
+    }
+
     .cover {
       height: 300px;
+    }
+
+    .cover img {
+      box-shadow: 5px 5px 20px 10px #323544;
     }
 
     .highlight {
@@ -78,17 +95,4 @@
       }
     }
   </style>
-{% endblock %}
-
-{% block extra_scripts %}
-  <script>
-      /*setTimeout(function () {
-          var hilites = document.querySelectorAll(".highlight")
-          for (var h in hilites) {
-              if (hilites[h] && hilites[h].classList) {
-                  hilites[h].classList.remove("highlight")
-              }
-          }
-      }, 1000)*/
-  </script>
 {% endblock %}

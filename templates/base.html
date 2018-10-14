@@ -11,11 +11,11 @@
 </head>
 <body>
 <nav id="main-nav">
-  <div id="links">
-    <a href="{{ url_for("index") }}"><h3>Home</h3></a>
-    <a href="{{ url_for("artists") }}"><h3>Browse Artists</h3></a>
-    <a href="{{ url_for("releases") }}"><h3>Browse Releases</h3></a>
-  </div>
+  <ul id="links">
+    <li><a href="{{ url_for("index") }}">Home</a></li>
+    <li><a href="{{ url_for("artists") }}">Browse Artists</a></li>
+    <li><a href="{{ url_for("releases") }}">Browse Releases</a></li>
+  </ul>
   <form id="search-form" action="{{ url_for("search",stream="false") }}" method="get">
     <div class="search-input">
       <input id="search" name="query" placeholder="Search..." type="search" autocomplete="off"/>

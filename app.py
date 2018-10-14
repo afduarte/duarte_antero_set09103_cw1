@@ -81,13 +81,14 @@ def releases(id=None):
         return abort(404)
     # Otherwise, render the single artist page
     release = RELEASES[id]
+    artist = ARTISTS[release['artist']]
     tracks = [TRACKS[x] for x in get_tracks(release)]
     # Get the highlighted track if this page was reached by clicking a search result
     highlight = request.args.get("highlight", None)
     # Sort by ascending release date
     # No problem with sorting in place since this list was created for this purpose
     tracks.sort(key=operator.itemgetter("position"))
-    return render_template("single_release.html", release=release, tracks=tracks, highlight=highlight)
+    return render_template("single_release.html", artist=artist, release=release, tracks=tracks, highlight=highlight)
 
 
 @app.route("/setlist", methods=['GET'])
