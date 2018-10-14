@@ -2,7 +2,7 @@ import datetime
 import operator
 import random
 from settings import APP_SECRET
-from flask import Flask, request, render_template, Response, abort, session
+from flask import Flask, request, render_template, Response, abort, session, redirect
 from model import ARTISTS, RELEASES, TRACKS, ARTIST_TO_RELEASES, LETTERS, RELEASE_LETTERS, get_releases, get_tracks, \
     search_results_for
 
@@ -23,8 +23,6 @@ def duration(time=0):
 def sortedvalues(value, key):
     if not value:
         return []
-    print(value)
-    print(key)
     return sorted(value.values(), key=operator.itemgetter(key))
 
 
@@ -94,36 +92,53 @@ def releases(id=None):
 
 @app.route("/setlist", methods=['GET'])
 def setlist():
-    print(session)
     return render_template("setlist.html")
 
 
-# Better semantics could have been achieved here with PUT and DELETE
+# Better semantics can be achieved here with PUT and DELETE
 # But HTML does not support PUT or DELETE as methods in form
 # So in order to maintain functionality without javascript
 # (AJAX supports PUT and DELETE)
-# a decision was made that the request woud always be a POST and
+# the request as sent from an HTML FORM, is always a POST and
 # the '_method' hidden field dictates what action should be taken
-# With a default of add
-@app.route("/setlist/<string:track>", methods=['POST'])
+# With a default of add.
+# The method supports both PUT and DELETE as well for AJAX calls
+
+# PUT here is idempotent, since session['setlist'] is a dictionary.
+# Adding a song more than once will always result in the song being in the setlist, but never more than once
+# DELETE does not have to be idempotent, since after something is deleted we can throw an error saying there's
+# nothing to delete with that ID
+
+# As for the response being a redirect,
+# a better way would be to return a 205 Status code, which tells
+# the client that it should refresh the view to update the status,
+# but no major browser implements this feature, they all treat a 205
+# response as a 204 NO CONTENT response and basically do nothing,
+# rather than refreshing the current page.
+@app.route("/setlist/<string:track>", methods=['POST', 'PUT', 'DELETE'])
 def setlist_update(track):
-    print("UPDATING SETLIST")
     current_setlist = session.pop("setlist", {})
-    method = request.form.get('_method', "POST")
-    if method == 'DELETE':
+    action = 'add'
+    if request.method == 'POST':
+        action = request.form.get('_action', "add")
+    elif request.method == 'PUT':
+        action = "add"
+    elif request.method == "DELETE":
+        action = "remove"
+
+    if action == 'remove':
         if track not in current_setlist:
             return "Track not in setlist, not able to delete", 400
         else:
-            print("DELETING " + track)
             del current_setlist[track]
             session['setlist'] = current_setlist
-            return request.referrer, 204
-    elif method == 'POST':
+            return redirect(request.referrer, 200)
+
+    elif action == 'add':
         if track in TRACKS:
-            print("ADDING " + track)
             current_setlist[track] = {"track": TRACKS[track], "weight": len(current_setlist)}
             session['setlist'] = current_setlist
-            return request.referrer, 204
+            return redirect(request.referrer, 200)
         else:
             return "Track not found, not able to add to setlist", 400
     else:
