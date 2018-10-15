@@ -3,7 +3,8 @@ import operator
 import random
 from settings import APP_SECRET
 from flask import Flask, request, render_template, Response, abort, session, redirect
-from model import ARTISTS, RELEASES, TRACKS, ARTIST_TO_RELEASES, LETTERS, RELEASE_LETTERS, get_releases, get_tracks, \
+from model import ARTISTS, RELEASES, TRACKS, ACOUSTICS, ARTIST_TO_RELEASES, LETTERS, RELEASE_LETTERS, get_releases, \
+    get_tracks, \
     search_results_for
 
 app = Flask(__name__)
@@ -88,7 +89,8 @@ def releases(id=None):
     # Sort by ascending release date
     # No problem with sorting in place since this list was created for this purpose
     tracks.sort(key=operator.itemgetter("position"))
-    return render_template("single_release.html", artist=artist, release=release, tracks=tracks, highlight=highlight)
+    combined = [(x, ACOUSTICS[x['id']]) for x in tracks]
+    return render_template("single_release.html", artist=artist, release=release, tracks=combined, highlight=highlight)
 
 
 @app.route("/setlist", methods=['GET'])

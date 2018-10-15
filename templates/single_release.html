@@ -18,7 +18,7 @@
       <a href="{{ url_for("artists",id=artist['id']) }}"><h4>More by {{ artist['name'] }}</h4></a>
     </div>
     <div id="tracks" class="line-item-list">
-      {% for t in tracks %}
+      {% for t,ac in tracks %}
         {% set class = "highlight" if t['id'] == highlight else "" %}
         {% set position =  t['position'] if t['position'] != -1 else "" %}
         <div class="line-item track setlist-changer">
@@ -26,8 +26,15 @@
             <input type="hidden" name="_action" value="add"/>
             <button type="submit"><i class="icono-plus"></i></button>
           </form>
-          <h3 class="ellipse {{ class }}">{{ position }} - {{ t['name'] }} ({{ t['duration'] | duration }})</h3>
-          <p>Chord Key: {{ track[''] }}</p>
+          <div class="text">
+            <h3 class="ellipse {{ class }}">{{ position }} - {{ t['name'] }} ({{ t['duration'] | duration }})</h3>
+            <div class="metrics">
+              <p>{{ ac['chord_key'] }}/{{ ac['song_key'] }}</p>
+              <p>{{ ac['danceability'] | float | round(precision=2) }}</p>
+              <p>{{ ac['bpm'] | int }} </p>
+              <p>{{ ac['dynamic_complexity'] | float | round(precision=2) }}</p>
+            </div>
+          </div>
         </div>
       {% endfor %}
     </div>
@@ -72,6 +79,27 @@
 
     .highlight {
       animation: flash 2s forwards linear normal;
+    }
+
+    .track .text {
+      display: flex;
+      flex-direction: column;
+    }
+    .text .metrics {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .text h3 {
+      margin: 1px
+    }
+
+    .metrics p {
+      color: #EB6C13;
+      background-color: #ffffff;
+      padding: 5px;
+      border-radius: 5px;
+      margin:0 3px;
     }
 
     @keyframes flash {
