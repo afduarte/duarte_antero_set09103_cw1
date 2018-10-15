@@ -2,6 +2,7 @@ from settings import DATA_DIR
 from flask import url_for
 import time
 import csv
+from math import sqrt
 from difflib import SequenceMatcher
 
 ARTISTS = {}
@@ -136,13 +137,14 @@ with open(DATA_DIR + "/tracks.csv") as file:
         else:
             RELEASE_TO_TRACKS[t["release"]] = [t["id"]]
 
-with open(DATA_DIR + "/acousticbrainz.csv") as file:
+with open(DATA_DIR + "/acousticbrainz-full.csv") as file:
     reader = csv.reader(file, delimiter=',', quotechar='"')
     # skip headers
     next(reader)
     for row in reader:
         # Add acoustic data to the dict, using their musicbrainz id as the key.
-        # csv headers: ["id","bpm","loudness","chordchange","chordkey","songkey","keystrenght"]
+        # headers:
+        # ["id","bpm","loudness","chord_key","chord_change_rate","song_key","key_strength","danceability","dynamic_complexity"]
         # All data was validated on creation, so there's no need to validate here.
         # We store the id of a tracks's release, rather than a pointer to it in RELEASES
         # to simulate a case where looking it up would be expensive (e.g: database)
@@ -150,12 +152,14 @@ with open(DATA_DIR + "/acousticbrainz.csv") as file:
         # We index using track
         ac = dict(
             id=row[0],
-            bpm=row[1],
-            loudness=row[2],
-            chord_change_rate=row[3],
-            chord_key=row[4],
+            bpm=int(float(row[1])),
+            loudness=float(row[2]),
+            chord_key=row[3],
+            chord_change_rate=float(row[4]),
             song_key=row[5],
-            key_strength=row[6]
+            key_strength=float(row[6]),
+            danceability=float(row[7]),
+            dynamic_complexity=float(row[8])
         )
 
         ACOUSTICS[ac["id"]] = ac
@@ -255,3 +259,65 @@ def search_results_for(query, stream=False):
                 entity = search_result_entity_fetcher[v['type']](v['id'])
                 count += 1
                 yield dict(score=match.ratio(), type=v['type'], entity=entity)
+
+
+# Transforms a key string (B minor) into a number (2)
+# A is 1
+# B is 2
+# ...
+# Sharps add 0.5
+# major adds 0.1
+# E# major = 5+0.5+0.1 = 5.6
+# This allows us to map song keys into a plane
+def key_to_num(k):
+    keys = dict(A=1, B=2, C=3, D=4, E=5, F=6, G=7)
+    initial = keys[k[0]]
+    sharp = 0.5 if k[1] == '#' else 0
+    major = 0.1 if k[-5:] == 'major' else 0
+    return initial + sharp + major
+
+
+# Where a and b are tuples of equal len
+# Calculates the distance from point a to point b
+# in len(a) dimensional space
+# A distance can not be negative, so we can safely return -1 as an error
+def n_dim_euclidean(a, b):
+    dimension = len(a)
+    if len(b) != dimension:
+        return -1
+    return sqrt(sum([(a[i] - b[i]) ** 2 for i in range(dimension)]))
+
+
+# Track distance is defined by looking at the distance between 2 tracks in 8 dimensional space
+# It takes into account the following metrics:
+# -- bpm
+# -- loudness
+# -- chord_key
+# -- chord_change_rate
+# -- song_key
+# -- key_strength
+# -- danceability
+# -- dynamic_complexity
+def track_distance(a, b):
+    # create each track's tuples with the defined weights
+    track_a = (
+        a['bpm'],
+        a['loudness'],
+        key_to_num(a['chord_key']),
+        a['chord_change_rate'],
+        key_to_num(a['song_key']),
+        a['key_strength'],
+        a['danceability'],
+        a['dynamic_complexity']
+    )
+    track_b = (
+        b['bpm'],
+        b['loudness'],
+        key_to_num(b['chord_key']),
+        b['chord_change_rate'],
+        key_to_num(b['song_key']),
+        b['key_strength'],
+        b['danceability'],
+        b['dynamic_complexity']
+    )
+    return n_dim_euclidean(track_a, track_b)
