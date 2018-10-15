@@ -7,6 +7,7 @@ from difflib import SequenceMatcher
 ARTISTS = {}
 RELEASES = {}
 TRACKS = {}
+ACOUSTICS = {}
 
 # Indices, for faster lookups
 
