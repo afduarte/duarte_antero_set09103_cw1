@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+  <div class="main-content">
+    <div id="hero">
+      <h1>Artist Spotlight</h1>
+      <div id="hero-items">
+        {% for x in hero %}
+          <a href="{{ url_for("artists",id=x['artist']['id']) }}">
+            <div class="hero-item">
+              {% if 'release' in x  and x['release']['cover'] %}
+                {% set front, _ = x['release']['cover'] %}
+                {% if front %}
+                  <div class="blurloader">
+                    <img src="{{ front }}"/>
+                  </div>
+                {% else %}
+                  <div class="blurloader">
+                    <img src="{{ url_for("static",filename="img/missing_cover.png") }}"/>
+                  </div>
+                {% endif %}
+              {% else %}
+                <div class="blurloader">
+                  <img src="{{ url_for("static",filename="img/missing_cover.png") }}"/>
+                </div>
+              {% endif %}
+
+              <h4 class="ellipse">{{ x['artist']['name'] }}</h4>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_style %}
+  <style>
+    #hero h1 {
+      color: #EB6C13;
+    }
+
+    #hero h1, #hero h4 {
+      text-align: center;
+    }
+
+    #hero-items {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      padding: 20px 0;
+      background-color: #4E5166;
+    }
+
+    .hero-item {
+      text-align: center;
+      width: 250px;
+      min-height: 300px;
+      margin: 0 10px;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    .hero-item .blurloader {
+      height: 250px;
+    }
+
+    .hero-item img {
+      border-radius: 5px;
+      filter: grayscale(20%);
+      transition: filter 200ms linear, transform 200ms linear;
+    }
+
+    .hero-item:hover img {
+      filter: grayscale(0);
+      transform: scale(1.05);
+    }
+  </style>
+{% endblock %}

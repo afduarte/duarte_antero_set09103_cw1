@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}Browse Artists{% endblock %}
+{% block content %}
+  <div id="artist-page" class="main-content">
+    <div id="letters">
+      <ul>
+        {% for letter,_ in alphabet %}
+          <li>
+            <a href="{{ url_for("artists",l=letter) }}"><h3>{{ letter | upper }}</h3></a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div id="artists">
+      {% for artist,release in artists %}
+        <a href="{{ url_for("artists",id=artist['id']) }}">
+          <div class="artist-container">
+            {% if release %}
+              {% set front, _ = release['cover'] %}
+              {% if front %}
+                <div class="cover blurloader">
+                  <img src="{{ front }}"/>
+                </div>
+              {% else %}
+                <div class="cover blurloader">
+                  <img src="{{ url_for("static",filename="img/missing_cover.png") }}"/>
+                </div>
+              {% endif %}
+            {% else %}
+              <div class="cover blurloader">
+                <img src="{{ url_for("static",filename="img/missing_cover.png") }}"/>
+              </div>
+            {% endif %}
+            <h3>{{ artist['name'] }}</h3>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_style %}
+  <style>
+
+
+    #letters {
+      margin: 0 25%;
+    }
+
+    #letters ul {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+    }
+
+    #artists {
+      margin: 0 20%;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      grid-gap: 3em;
+    }
+
+    .artist-container {
+      width: 100%;
+      text-align: center;
+    }
+
+    .artist-container .cover img {
+      box-shadow: 5px 5px 20px 10px #323544;
+      width: 70%;
+      height: 70%;
+      transition: box-shadow 200ms ease-in-out;
+    }
+
+    .artist-container:hover .cover img {
+      box-shadow: 5px 5px 10px 5px rgba(255, 115, 19, 0.23);
+    }
+
+    .artist-container .cover.rotate {
+      min-height: 250px;
+      box-shadow: none;
+    }
+  </style>
+{% endblock %}

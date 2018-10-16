@@ -1,0 +1,285 @@
+/* Fonts */
+@font-face {
+    font-family: "Montserrat";
+    src: url("../font/Montserrat/Montserrat-Medium.ttf");
+}
+
+@font-face {
+    font-family: "Montserrat";
+    src: url("../font/Montserrat/Montserrat-Bold.ttf");
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: "Montserrat";
+    src: url("../font/Montserrat/Montserrat-Italic.ttf");
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "Montserrat";
+    src: url("../font/Montserrat/Montserrat-BoldItalic.ttf");
+    font-weight: bold;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "Open Sans";
+    src: url("../font/Open_Sans/OpenSans-Regular.ttf");
+}
+
+@font-face {
+    font-family: "Open Sans";
+    src: url("../font/Open_Sans/OpenSans-Bold.ttf");
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: "Open Sans";
+    src: url("../font/Open_Sans/OpenSans-Italic.ttf");
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "Open Sans";
+    src: url("../font/Open_Sans/OpenSans-BoldItalic.ttf");
+    font-weight: bold;
+    font-style: italic;
+}
+
+/* Colours:
+ *
+ * name                HEX
+ * deep carrot orange: #EB6C13
+ * onyx              : #323544
+ * outer space       : #424650
+ * silver chalice    : #B1B1B1
+ * independence      : #4C5760
+ */
+
+body {
+    margin: 0;
+    font-family: 'Open Sans', sans-serif;
+    background-color: #424650;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+    color: #FFFFFF;
+}
+
+a {
+    font-weight: bold;
+    color: #EB6C13;
+    text-decoration: none; /* no underline */
+}
+
+li {
+    list-style: none;
+}
+
+.line-item {
+    display: flex;
+    flex-direction: row;
+    height: 70px;
+    align-items: center;
+    margin: 5px;
+    border-bottom: 2px solid #EB6C13;
+}
+
+.ellipse {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#main-nav {
+    z-index: 100;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #EB6C13;
+    display: grid;
+    grid-template-columns: 4fr 5fr 3fr;
+    align-items: center;
+    box-shadow: 0 5px 5px 3px #323544;
+}
+
+#main-nav ul li {
+    display: inline-block;
+}
+
+#main-nav ul li a {
+    color: #ffffff;
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 20px;
+    font-size: 1.2em;
+}
+
+#main-nav ul li a:after {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+    width: 100%;
+    height: 1px;
+    content: '.';
+    color: transparent;
+    background: #FFFFFF;
+    visibility: hidden;
+    opacity: 0;
+    z-index: -1;
+    transition: all 300ms ease-out;
+}
+
+#main-nav a:hover {
+    color: #EB6C13;
+}
+
+#main-nav a:hover:after {
+    opacity: 1;
+    visibility: visible;
+    height: 100%;
+}
+
+#main-nav h3 {
+    color: #ffffff;
+}
+
+#search-form {
+    display: flex;
+    flex-direction: row;
+}
+
+#search {
+    padding: 7px 0;
+    border-bottom: 3px solid #FFFFFF;
+    width: 470px;
+    transition: all .5s ease;
+    margin: 0 10px;
+}
+
+#search:focus {
+    padding-top: 15px;
+    width: 500px;
+}
+
+#search::placeholder, #search {
+    color: #ffffff;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+#search-form button {
+    cursor: pointer;
+}
+
+#search-results {
+    z-index: 99;
+    width: 500px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    position: absolute;
+    flex-direction: column;
+    background-color: rgba(255, 255, 255, 0.9);
+    opacity: 1;
+    display: flex;
+    transition: opacity 200ms ease-in-out;
+}
+
+#search-results a {
+    text-align: left;
+    color: #EB6C13;
+    padding: 5px;
+}
+
+#search-results a:hover {
+    background-color: #323544;
+    color: #EB6C13;
+}
+
+#search-icon {
+    color: #ffffff;
+}
+
+.main-content {
+    margin-top: 120px;
+}
+
+@keyframes rotating {
+    from {
+        transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@-webkit-keyframes rotating {
+    from {
+        transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+#search-icon.icono-sync {
+    -webkit-animation: rotating 1s linear infinite;
+    -moz-animation: rotating 1s linear infinite;
+    -ms-animation: rotating 1s linear infinite;
+    -o-animation: rotating 1s linear infinite;
+    animation: rotating 1s linear infinite;
+}
+
+#setlist-opener {
+    display: flex;
+    justify-self: end;
+    width: 5em;
+    height: 100%;
+    transition: width 500ms ease-in;
+}
+
+#setlist-opener button i {
+    color: #ffffff;
+    zoom: 2;
+}
+
+#setlist {
+    padding-top: 110px;
+    position: fixed;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 0;
+    background-color: #EB6C13;
+    box-shadow: -1px 0 10px 5px #424650;
+    transition: width 500ms ease-in;
+}
+
+#setlist.open {
+    width: 25%
+}
+
+.setlist-changer h3 {
+
+}
+
+#setlist .line-item {
+    border-bottom-color: #FFFFFF;
+}

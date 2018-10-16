@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}{{ artist['name'] }}{% endblock %}
+{% block content %}
+  <div id="artist-page" class="main-content">
+    <div id="artist">
+      {% if releases %}
+        <div class="cover blurloader">
+          <img src="{{ releases[0]['cover'][0] | default(url_for("static",filename="img/missing_cover.png")) }}"/>
+        </div>
+      {% else %}
+        <div class="cover blurloader">
+          <img src="{{ url_for("static",filename="img/missing_cover.png") }}"/>
+        </div>
+      {% endif %}
+      {% set begin, end = artist['lifespan'] %}
+      <h2>{{ artist['name'] }}</h2>
+      <h4>{{ begin }} - {{ end if end else "now" }}</h4>
+    </div>
+    <div id="releases" class="line-item-list">
+      {% if not releases %}
+        <h3>Sorry, no releases for this artist, <a href="{{ url_for("artists") }}">look at another one?</a></h3>
+      {% endif %}
+      {% for r in releases %}
+        <a href="{{ url_for("releases",id=r['id']) }}">
+          <div class="release line-item">
+            <img src="{{ r['cover'][0] | default(url_for("static",filename="img/missing_cover.png")) }}"/>
+            <h3 title="{{ r['name'] }}" class="ellipse"> {{ r['reldate'][0:4] | default("?") }} - {{ r['name'] }}</h3>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_style %}
+  <style>
+    #artist-page {
+      display: grid;
+      grid-template-columns: 1fr 3fr 5fr 1fr;
+    }
+
+    #artist {
+      grid-column: 2;
+    }
+
+    #releases {
+      grid-column: 3;
+    }
+
+    #artist {
+      max-width: 300px;
+    }
+
+    .cover {
+      height: 300px;
+    }
+
+    .cover img {
+      box-shadow: 5px 5px 20px 10px #323544;
+    }
+
+    .release {
+      max-width: 500px;
+    }
+
+    .release img {
+      margin: 5px;
+      width: 60px;
+    }
+  </style>
+{% endblock %}

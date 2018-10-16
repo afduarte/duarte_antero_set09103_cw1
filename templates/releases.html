@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block title %}Browse Releases{% endblock %}
+{% block content %}
+  <div id="release-page" class="main-content">
+    <div id="letters">
+      <ul>
+        {% for letter,_ in alphabet %}
+          <li>
+            <a href="{{ url_for("releases",l=letter) }}"><h3>{{ letter | upper }}</h3></a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div id="releases">
+      {% for release in releases %}
+        <a href="{{ url_for("releases",id=release['id']) }}">
+          <div class="release-container">
+            {% if release %}
+              {% set front, _ = release['cover'] %}
+              {% if front %}
+                <div class="cover blurloader">
+                  <img src="{{ front }}"/>
+                </div>
+              {% else %}
+                <div class="cover blurloader">
+                  <img src="{{ url_for("static",filename="img/missing_cover.png") }}"/>
+                </div>
+              {% endif %}
+            {% else %}
+              <div class="cover blurloader">
+                <img src="{{ url_for("static",filename="img/missing_cover.png") }}"/>
+              </div>
+            {% endif %}
+            <h3>{{ release['name'] }}</h3>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_style %}
+  <style>
+
+
+    #letters {
+      margin: 0 25%;
+    }
+
+    #letters ul {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+    }
+
+    #releases {
+      margin: 0 20%;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-gap: 3em;
+    }
+
+    .release-container {
+      width: 100%;
+      text-align: center;
+    }
+
+    .release-container .cover {
+      min-width: 200px;
+      min-height: 200px;
+    }
+  </style>
+{% endblock %}

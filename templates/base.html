@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}{% endblock %} | Set.lystr</title>
+  <link rel="stylesheet" href="{{ url_for("static",filename="css/super-form-reset.css") }}" type="text/css">
+  <link rel="stylesheet" href="{{ url_for("static",filename="css/icono.min.css") }}" type="text/css">
+  <link rel="stylesheet" href="{{ url_for("static",filename="css/blurloader.css") }}" type="text/css">
+  <link rel="stylesheet" href="{{ url_for("static",filename="css/main.css") }}" type="text/css">
+  {% block extra_style %} {% endblock %}
+</head>
+<body>
+<nav id="main-nav">
+  <ul id="links">
+    <li><a href="{{ url_for("index") }}">Home</a></li>
+    <li><a href="{{ url_for("artists") }}">Browse Artists</a></li>
+    <li><a href="{{ url_for("releases") }}">Browse Releases</a></li>
+  </ul>
+  <form id="search-form" action="{{ url_for("search",stream="false") }}" method="get">
+    <div class="search-input">
+      <input id="search" name="query" placeholder="Search..." type="search" autocomplete="off"/>
+      <div id="search-results"></div>
+    </div>
+    <button type="submit"><i id="search-icon" class="icono-search"></i></button>
+  </form>
+  <div id="setlist-opener">
+    <button><i class="icono-hamburger"></i></button>
+  </div>
+</nav>
+{% block content %} {% endblock %}
+<div id="setlist">{% include "setlist.html" %}</div>
+<script src="{{ url_for("static",filename="js/img-blurloader.js") }}"></script>
+<script src="{{ url_for("static",filename="js/main.js") }}"></script>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>
