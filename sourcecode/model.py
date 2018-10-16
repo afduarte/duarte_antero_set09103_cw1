@@ -298,6 +298,7 @@ def n_dim_euclidean(a, b):
 # -- key_strength
 # -- danceability
 # -- dynamic_complexity
+# Good idea, but won't actually use this, maybe for a future project
 def track_distance(a, b):
     # create each track's tuples with the defined weights
     track_a = (
@@ -321,3 +322,7 @@ def track_distance(a, b):
         b['dynamic_complexity']
     )
     return n_dim_euclidean(track_a, track_b)
+
+
+def get_top(where, key, count=10, reverse=False):
+    return sorted(where.values(), key=key, reverse=reverse)[0:count]

@@ -1,0 +1,10 @@
+{% from "macros.html" import track %}
+{% if session['setlist'] %}
+  <ul>
+    {% for o in session['setlist'] | sortedvalues("weight") %}
+      {{ track(o['track'],remove=True,position=(o['weight'] + 1)) }}
+    {% endfor %}
+  </ul>
+{% else %}
+  <h4 style="text-align: center">You haven't added any songs to your setlist, get adding!</h4>
+{% endif %}

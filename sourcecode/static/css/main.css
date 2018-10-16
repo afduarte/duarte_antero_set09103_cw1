@@ -100,7 +100,7 @@ li {
     width: 100%;
     background-color: #EB6C13;
     display: grid;
-    grid-template-columns: 4fr 5fr 3fr;
+    grid-template-columns: 5fr 3fr 4fr;
     align-items: center;
     box-shadow: 0 5px 5px 3px #323544;
 }
@@ -159,14 +159,14 @@ li {
 #search {
     padding: 7px 0;
     border-bottom: 3px solid #FFFFFF;
-    width: 470px;
+    width: 230px;
     transition: all .5s ease;
     margin: 0 10px;
 }
 
 #search:focus {
     padding-top: 15px;
-    width: 500px;
+    width: 250px;
 }
 
 #search::placeholder, #search {
@@ -267,13 +267,13 @@ li {
     top: 0;
     height: 100%;
     width: 0;
-    background-color: #EB6C13;
+    background-color: #323544;
     box-shadow: -1px 0 10px 5px #424650;
     transition: width 500ms ease-in;
 }
 
 #setlist.open {
-    width: 25%
+    width: 30%
 }
 
 .setlist-changer h3 {
@@ -282,4 +282,86 @@ li {
 
 #setlist .line-item {
     border-bottom-color: #FFFFFF;
+}
+
+.highlight {
+    animation: flash 2s forwards linear normal;
+}
+
+.track {
+    max-width: 500px;
+}
+
+.track button {
+    margin-right: 5px;
+}
+
+.track .text {
+    display: flex;
+    flex-direction: column;
+    max-width: 90%;
+}
+
+.text .metrics {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.text h3 {
+    margin: 1px
+}
+
+.metrics p {
+    color: #EB6C13;
+    padding: 3px;
+    margin: 5px;
+    font-weight: bold;
+    font-variant-caps: small-caps;
+    height: 25px;
+}
+
+.metrics i {
+    color: #EB6C13;
+    margin-top: 0;
+}
+
+@keyframes flash {
+    0% {
+        background-color: rgba(238, 238, 238, 0);
+    }
+
+    25% {
+        background-color: rgba(238, 238, 238, 1);
+    }
+
+    50% {
+        background-color: rgba(238, 238, 238, 0.5);
+    }
+
+    75% {
+        background-color: rgba(238, 238, 238, 0.25);
+    }
+
+    100% {
+        background: none;
+    }
+}
+
+#letters {
+    margin: 0 25%;
+}
+
+#letters ul {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+@media screen and (max-width: 1260px) {
+    #main-nav ul {
+        display: flex;
+        flex-direction: column;
+    }
+
 }

@@ -4,8 +4,7 @@ import random
 from settings import APP_SECRET
 from flask import Flask, request, render_template, Response, abort, session, redirect
 from model import ARTISTS, RELEASES, TRACKS, ACOUSTICS, ARTIST_TO_RELEASES, LETTERS, RELEASE_LETTERS, get_releases, \
-    get_tracks, \
-    search_results_for
+    get_tracks, get_top, search_results_for
 
 app = Flask(__name__)
 app.template_folder = 'templates'
@@ -20,11 +19,55 @@ def duration(time=0):
     return str(int(minutes % 60)).zfill(2) + ":" + str(int(seconds % 60)).zfill(2)
 
 
+# Transform a loudness number into a volume icon
+@app.template_filter()
+def volume_icon(loudness=0):
+    base = "icono-volume"
+    if loudness <= 0.3:
+        return base
+    if loudness <= 0.7:
+        return base + "Low"
+    if loudness <= 0.96:
+        return base + "Medium"
+    return base + "High"
+
+
+# Transform a loudness number into an explanation
+@app.template_filter()
+def volume_text(loudness=0):
+    if loudness <= 0.3:
+        return "Deafening"
+    if loudness <= 0.7:
+        return "Not loud enough"
+    if loudness <= 0.96:
+        return "Pretty loud"
+    return "I CAN'T HEAR YOU OVER THE SONG!!"
+
+
+# Transform a danceability volume into a message
+@app.template_filter()
+def danceability_msg(dnc=0):
+    if dnc <= 0.7:
+        return "not danceable"
+    if dnc <= 1.1:
+        return "danceable"
+    if dnc <= 1.5:
+        return "highly danceable"
+    return "dancefloor smasher!"
+
+
 @app.template_filter()
 def sortedvalues(value, key):
     if not value:
         return []
     return sorted(value.values(), key=operator.itemgetter(key))
+
+
+@app.template_filter()
+def get_acoustics(track):
+    if 'id' not in track:
+        return None
+    return ACOUSTICS.get(track['id'], None)
 
 
 @app.route("/", methods=['GET'])
@@ -39,7 +82,26 @@ def index():
             "release": releases[0] if releases else None
         }
         spotlight.append(obj)
-    return render_template('index.html', hero=spotlight)
+    top_dance = [TRACKS[x['id']] for x in get_top(ACOUSTICS, operator.itemgetter('danceability'), 5, reverse=True)]
+    return render_template(
+        'index.html',
+        hero=spotlight,
+        top_dance=top_dance,
+        staff_picks=[
+            TRACKS['8c229043-1d05-40db-9342-9e084d315a25'],  # The Bellrays - Black lightning
+            TRACKS['ab205556-92b9-4c89-adec-0a9dbce7b43f'],  # Arcade Fire - Ready to start
+            TRACKS['c61d3fe1-f265-45b9-855e-35a3dfae45c4'],  # Graveyard - Ain't fit to live here
+            TRACKS['63d9e22a-6053-491d-bbd7-da9707b8bbe0'],  # Garbage - Queer
+            TRACKS['2c6963e1-dd65-4509-b046-51fd808fe6fe'],  # Halestorm - Mayhem
+        ],
+        classics=[
+            TRACKS['cb77deb7-f961-4cb3-9a44-c56adc3d10e8'],  # Janis Joplin - Piece of my heart
+            TRACKS['ef71afb6-5e51-41df-999b-9e7c7306063a'],  # AC/DC - Back in black
+            TRACKS['b8bcd44d-b698-465f-a3ed-c38ca81418d6'],  # Guns n' Roses - Paradise City
+            TRACKS['768217d5-f223-4942-9283-8b3e67e62e94'],  # The Doors - Break on Through
+            TRACKS['597eae0b-ccb6-4076-b997-0ce940586076'],  # Pink Floyd - Another brick in the wall
+        ]
+    )
 
 
 @app.route("/artists", methods=['GET'])
@@ -89,8 +151,7 @@ def releases(id=None):
     # Sort by ascending release date
     # No problem with sorting in place since this list was created for this purpose
     tracks.sort(key=operator.itemgetter("position"))
-    combined = [(x, ACOUSTICS[x['id']]) for x in tracks]
-    return render_template("single_release.html", artist=artist, release=release, tracks=combined, highlight=highlight)
+    return render_template("single_release.html", artist=artist, release=release, tracks=tracks, highlight=highlight)
 
 
 @app.route("/setlist", methods=['GET'])
@@ -133,7 +194,15 @@ def setlist_update(track):
         if track not in current_setlist:
             return "Track not in setlist, not able to delete", 400
         else:
+            # Get the weight of the item to delete so we can reorganise the setlist
+            curr_weight = current_setlist[track]['weight']
+            print(curr_weight)
             del current_setlist[track]
+            # reorganise the setlist by decreasing the weight of every element that
+            # was added before the one we're deleting
+            for t in current_setlist.values():
+                if t['weight'] > curr_weight:
+                    t['weight'] = t['weight'] - 1
             session['setlist'] = current_setlist
             return redirect(request.referrer, 200)
 

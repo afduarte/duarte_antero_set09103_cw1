@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% from "macros.html" import track %}
+{% block title %}{{ release['name'] }}{% endblock %}
+{% block content %}
+  <div id="release-page" class="main-content">
+    <div id="release">
+      {% set front, _ = release['cover'] %}
+      {% if front %}
+        <div class="cover blurloader">
+          <img src="{{ front }}"/>
+        </div>
+      {% else %}
+        <div class="cover blurloader">
+          <img src="{{ url_for("static",filename="img/missing_cover.png") }}"/>
+        </div>
+      {% endif %}
+      <h2>{{ release['name'] }}</h2>
+      <h4>{{ release['reldate'] if release['reldate'] else "-" }}</h4>
+      <a href="{{ url_for("artists",id=artist['id']) }}"><h4>More by {{ artist['name'] }}</h4></a>
+    </div>
+    <div id="tracks" class="line-item-list">
+      {% for t in tracks %}
+        {% set position =  t['position'] if t['position'] != -1 else "" %}
+        {{ track(t, highlight=(t['id'] == highlight),position=position) }}
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_style %}
+  <style>
+    #release-page {
+      display: grid;
+      grid-template-columns: 1fr 3fr 5fr 1fr;
+    }
+
+    #release {
+      grid-column: 2;
+      max-width: 300px;
+    }
+
+    #release a h4 {
+      color: #EB6C13;
+    }
+
+    #tracks {
+      grid-column: 3;
+    }
+
+    .cover {
+      max-height: 300px;
+    }
+
+    .cover img {
+      box-shadow: 5px 5px 20px 10px #323544;
+    }
+  </style>
+{% endblock %}

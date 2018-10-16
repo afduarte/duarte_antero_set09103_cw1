@@ -1,13 +1,12 @@
 {% extends 'base.html' %}
+{% from "macros.html" import letter %}
 {% block title %}Browse Artists{% endblock %}
 {% block content %}
   <div id="artist-page" class="main-content">
     <div id="letters">
       <ul>
-        {% for letter,_ in alphabet %}
-          <li>
-            <a href="{{ url_for("artists",l=letter) }}"><h3>{{ letter | upper }}</h3></a>
-          </li>
+        {% for l,_ in alphabet %}
+          {{ letter(l) }}
         {% endfor %}
       </ul>
     </div>
@@ -41,17 +40,6 @@
 
 {% block extra_style %}
   <style>
-
-
-    #letters {
-      margin: 0 25%;
-    }
-
-    #letters ul {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-around;
-    }
 
     #artists {
       margin: 0 20%;

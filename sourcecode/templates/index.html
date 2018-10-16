@@ -1,8 +1,13 @@
 {% extends 'base.html' %}
+{% from "macros.html" import track %}
 {% block title %}Home{% endblock %}
 {% block content %}
   <div class="main-content">
     <div id="hero">
+      <p><b>set.lystr</b> helps you create the best setlist you could ever imagine!</p>
+      <p>If you're in a band (like the cool kids) and need help choosing which songs to play,
+        or you just want to create a killer playlist for your next party, we're here for you. </p>
+      <h3>Rock on!</h3>
       <h1>Artist Spotlight</h1>
       <div id="hero-items">
         {% for x in hero %}
@@ -31,6 +36,26 @@
         {% endfor %}
       </div>
     </div>
+    <div id="curated">
+      <div id="top-dance">
+        <h1>Top {{ top_dance | length }} tracks to dance to</h1>
+        {% for d in top_dance %}
+          {{ track(d,position=loop.index) }}
+        {% endfor %}
+      </div>
+      <div id="staff-picks">
+        <h1>Staff Picks</h1>
+        {% for s in staff_picks %}
+          {{ track(s,position=loop.index) }}
+        {% endfor %}
+      </div>
+      <div id="staff-picks">
+        <h1>Absolute Classics</h1>
+        {% for c in classics %}
+          {{ track(c,position=loop.index) }}
+        {% endfor %}
+      </div>
+    </div>
   </div>
 {% endblock %}
 
@@ -40,21 +65,33 @@
       color: #EB6C13;
     }
 
-    #hero h1, #hero h4 {
+    #hero h1, #hero h3, #hero h4, #hero p {
       text-align: center;
     }
 
+    #hero p {
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    #hero p b {
+      font-weight: bolder;
+      color: #EB6C13;
+    }
+
     #hero-items {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      grid-gap: 1em;
+      justify-items: center;
       padding: 20px 0;
       background-color: #4E5166;
     }
 
     .hero-item {
       text-align: center;
-      width: 250px;
+      width: 90%;
+      min-width: 230px;
       min-height: 300px;
       margin: 0 10px;
       padding: 10px;
@@ -62,7 +99,7 @@
     }
 
     .hero-item .blurloader {
-      height: 250px;
+      min-height: 250px;
     }
 
     .hero-item img {
@@ -74,6 +111,20 @@
     .hero-item:hover img {
       filter: grayscale(0);
       transform: scale(1.05);
+    }
+
+    #curated {
+      margin-top: 60px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+      grid-gap: 0.5em;
+    }
+
+    #curated h1 {
+      color: #EB6C13;
+      text-align: center;
+      border-bottom: 3px solid #323544;
+      width: 90%;
     }
   </style>
 {% endblock %}

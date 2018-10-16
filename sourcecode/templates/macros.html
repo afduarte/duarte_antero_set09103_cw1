@@ -1,0 +1,26 @@
+{% macro track(t, remove=False, highlight=False, position=0) %}
+  {% set ac = t | get_acoustics %}
+  <div class="line-item track setlist-changer {{ "highlight" if highlight else "" }}">
+    <form method="post" action="{{ url_for("setlist_update",track=t['id']) }}">
+      <input type="hidden" name="_action" value="{{ "add" if not remove else "remove" }}"/>
+      <button type="submit"><i class="icono-{{ "plus" if not remove else "cross" }}"></i></button>
+    </form>
+    <div class="text">
+      <h3 class="ellipse">{{ position }} - {{ t['name'] }} ({{ t['duration'] | default(0) | duration }})</h3>
+      <div class="metrics">
+        {% if ac != None %}
+          <p>{{ ac['chord_key'] }} / {{ ac['song_key'] }}</p>
+          <p>{{ ac['bpm'] | int }} bpm</p>
+          <p title="{{ ac['loudness'] | volume_text }}"><i class="{{ ac['loudness'] | volume_icon }}"></i></p>
+          <p>{{ ac['danceability'] | danceability_msg }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endmacro %}
+
+{% macro letter(l,url="?l="+l) %}
+  <li>
+    <a href="{{ url }}"><h3>{{ l | upper }}</h3></a>
+  </li>
+{% endmacro %}
