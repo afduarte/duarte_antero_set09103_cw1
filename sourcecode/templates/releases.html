@@ -1,13 +1,12 @@
 {% extends 'base.html' %}
+{% from "macros.html" import letter %}
 {% block title %}Browse Releases{% endblock %}
 {% block content %}
   <div id="release-page" class="main-content">
     <div id="letters">
       <ul>
-        {% for letter,_ in alphabet %}
-          <li>
-            <a href="{{ url_for("releases",l=letter) }}"><h3>{{ letter | upper }}</h3></a>
-          </li>
+        {% for l,_ in alphabet %}
+          {{ letter(l) }}
         {% endfor %}
       </ul>
     </div>
@@ -56,7 +55,7 @@
     #releases {
       margin: 0 20%;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
       grid-gap: 3em;
     }
 
@@ -65,9 +64,20 @@
       text-align: center;
     }
 
-    .release-container .cover {
-      min-width: 200px;
-      min-height: 200px;
+    .release-container .cover img {
+      box-shadow: 5px 5px 20px 10px #323544;
+      width: 70%;
+      height: 70%;
+      transition: box-shadow 200ms ease-in-out;
+    }
+
+    .release-container:hover .cover img {
+      box-shadow: 5px 5px 10px 5px rgba(255, 115, 19, 0.23);
+    }
+
+    .release-container .cover.rotate {
+      min-height: 250px;
+      box-shadow: none;
     }
   </style>
 {% endblock %}

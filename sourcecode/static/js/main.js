@@ -17,7 +17,7 @@ const LocalStorage = {
 };
 
 // Search Functionality
-// It uses the old XMLHttpRequest because it's easier to handle request.abort()
+// It uses the old XMLHttpRequest because it's easier to handle request.abort() and streaming responses
 const search = document.getElementById("search");
 let oReq = new XMLHttpRequest();
 const datalist = document.getElementById("search-results");
@@ -73,8 +73,8 @@ const setlist = document.getElementById("setlist");
 function changeSidebar(open) {
     if (open) {
         setlist.classList.add('open');
-        // We have to use 25% of the body width here, since setlist's width is still 0
-        const width = document.body.clientWidth / 4;
+        // We have to use 33% of the body width here, since setlist's width is still 0
+        const width = (document.body.clientWidth / 3) - setlistBtn.clientWidth;
         setlistBtn.style.width = width + 'px';
     } else {
         setlist.classList.remove('open');
@@ -103,6 +103,9 @@ function addListenersToSetlistButtons(where) {
             btn.addEventListener('click', evt => {
                 evt.preventDefault();
                 evt.stopPropagation();
+                if (!setlist.classList.contains('open')) {
+                    changeSidebar(true);
+                }
                 // Find parent form
                 const f = evt.path.find(e => e.tagName.toLowerCase() === "form");
                 const index = Array.from(document.forms).indexOf(f);
