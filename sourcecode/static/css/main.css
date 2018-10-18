@@ -71,7 +71,7 @@ h1, h2, h3, h4, h5, h6 {
 a {
     font-weight: bold;
     color: #EB6C13;
-    text-decoration: none; /* no underline */
+    cursor: pointer;
 }
 
 li {
@@ -116,6 +116,7 @@ li {
     text-align: center;
     padding: 20px;
     font-size: 1.2em;
+    text-decoration: none;
 }
 
 #main-nav ul li a:after {

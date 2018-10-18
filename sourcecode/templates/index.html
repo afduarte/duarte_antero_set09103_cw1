@@ -4,7 +4,7 @@
 {% block content %}
   <div class="main-content">
     <div id="hero">
-      <p><b>set.lystr</b> helps you create the best setlist you could ever imagine!</p>
+      <p><a href="{{ url_for('index') }}">set.lystr</a> helps you create the best setlist you could ever imagine!</p>
       <p>If you're in a band (like the cool kids) and need help choosing which songs to play,
         or you just want to create a killer playlist for your next party, we're here for you. </p>
       <h3>Rock on!</h3>
@@ -40,19 +40,25 @@
       <div id="top-dance">
         <h1>Top {{ top_dance | length }} tracks to dance to</h1>
         {% for d in top_dance %}
-          {{ track(d,position=loop.index) }}
+          <a href="{{ url_for("releases",id=d['release'],highlight=d['id']) }}">
+            {{ track(d,position=loop.index) }}
+          </a>
         {% endfor %}
       </div>
       <div id="staff-picks">
         <h1>Staff Picks</h1>
         {% for s in staff_picks %}
-          {{ track(s,position=loop.index) }}
+          <a href="{{ url_for("releases",id=s['release'],highlight=s['id']) }}">
+            {{ track(s,position=loop.index) }}
+          </a>
         {% endfor %}
       </div>
       <div id="staff-picks">
         <h1>Absolute Classics</h1>
         {% for c in classics %}
-          {{ track(c,position=loop.index) }}
+          <a href="{{ url_for("releases",id=c['release'],highlight=c['id']) }}">
+            {{ track(c,position=loop.index) }}
+          </a>
         {% endfor %}
       </div>
     </div>
@@ -77,6 +83,10 @@
     #hero p b {
       font-weight: bolder;
       color: #EB6C13;
+    }
+
+    #hero a {
+      text-decoration: none;
     }
 
     #hero-items {
@@ -117,7 +127,11 @@
       margin-top: 60px;
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
-      grid-gap: 0.5em;
+      grid-gap: 1em;
+    }
+
+    #curated a {
+      text-decoration: none;
     }
 
     #curated h1 {
@@ -125,6 +139,10 @@
       text-align: center;
       border-bottom: 3px solid #323544;
       width: 90%;
+    }
+
+    #curated .metrics p, h3 {
+      font-size: 0.9em;
     }
   </style>
 {% endblock %}
