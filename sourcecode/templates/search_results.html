@@ -1,15 +1,56 @@
 {% extends 'base.html' %}
 {% block title %}Search Results{% endblock %}
 {% block content %}
-  <div id="search" class="main-content">
-    <ul>
-      {% for r in results|sort(attribute='score', reverse=True) %}
-        <li data-score="{{ r['score'] }}">
-          <a href="{{ url_for(r['type'],id=r['entity']['id']) }}">
-            <p title="{{ r['entity']['name'] }}" class="ellipse">{{ r['entity']['name'] }}</p>
-          </a>
-        </li>
+  <div id="search-page" class="main-content">
+    <h1>Search results</h1>
+    <div id="results">
+      {% for group in results | groupby("type") %}
+        <div>
+          <h2>{{ group.grouper | capitalize }}</h2>
+          <ul class="line-item-list">
+            {% for r in group.list |sort(attribute='score', reverse=True) %}
+              <li class="line-item" data-score="{{ r['score'] }}">
+                {% if r['type'] != "tracks" %}
+                  <a href="{{ url_for(r['type'],id=r['entity']['id']) }}">
+                {% else %}
+                  <a href="{{ url_for("releases",id=r['entity']['release'],highlight=r['entity']['id']) }}">
+                {% endif %}
+                <h3 title="{{ r['entity']['name'] }}" class="ellipse">{{ r['entity']['name'] }}</h3>
+                {{ r['message']|safe }}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
       {% endfor %}
-    </ul>
+    </div>
   </div>
+{% endblock %}
+
+{% block extra_style %}
+  <style>
+    #results {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+      margin: 120px 5% 0 5%;
+    }
+
+    #search-page h1, #results h2 {
+      text-align: center;
+    }
+
+    #results ul {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #results li h3 {
+      margin: 3px 0;
+    }
+
+    #results li a {
+      width: 100%;
+      text-decoration: none;
+    }
+  </style>
 {% endblock %}

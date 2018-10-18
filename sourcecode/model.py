@@ -257,8 +257,9 @@ def search_results_for(query, stream=False):
             match = SequenceMatcher(None, k, query)
             if match.ratio() > 0.4:
                 entity = search_result_entity_fetcher[v['type']](v['id'])
+                message = search_result_message_builder[v['type']](v['id'])
                 count += 1
-                yield dict(score=match.ratio(), type=v['type'], entity=entity)
+                yield dict(score=match.ratio(), type=v['type'], entity=entity, message=message)
 
 
 # Transforms a key string (B minor) into a number (2)

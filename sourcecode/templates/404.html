@@ -1,9 +1,35 @@
 {% extends "base.html" %}
 {% block title %}Page Not Found{% endblock %}
 {% block content %}
-  <div class="main-content">
+  <div id="page-not-found" class="main-content">
     <h1>Page Not Found</h1>
-    <p>What you were looking for is just not there.
-    <p><a href="{{ url_for('index') }}">go somewhere nice</a>
+    <p>Nothing to see here.</p>
+    <img src="{{ url_for("static",filename="img/broken_cover.png") }}"/>
+    <p><a href="{{ url_for('index') }}">go home.</a>
   </div>
+{% endblock %}
+
+{% block extra_style %}
+  <style>
+    #page-not-found {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    #page-not-found img {
+      max-width: 400px;
+    }
+
+    #page-not-found h1 {
+      font-size: 2.5em;
+    }
+
+    #page-not-found p {
+      font-size: 2em;
+      color: #ffffff;
+    }
+  </style>
 {% endblock %}
