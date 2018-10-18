@@ -40,19 +40,25 @@
       <div id="top-dance">
         <h1>Top {{ top_dance | length }} tracks to dance to</h1>
         {% for d in top_dance %}
-          {{ track(d,position=loop.index) }}
+          <a href="{{ url_for("releases",id=d['release'],highlight=d['id']) }}">
+            {{ track(d,position=loop.index) }}
+          </a>
         {% endfor %}
       </div>
       <div id="staff-picks">
         <h1>Staff Picks</h1>
         {% for s in staff_picks %}
-          {{ track(s,position=loop.index) }}
+          <a href="{{ url_for("releases",id=s['release'],highlight=s['id']) }}">
+            {{ track(s,position=loop.index) }}
+          </a>
         {% endfor %}
       </div>
       <div id="staff-picks">
         <h1>Absolute Classics</h1>
         {% for c in classics %}
-          {{ track(c,position=loop.index) }}
+          <a href="{{ url_for("releases",id=c['release'],highlight=c['id']) }}">
+            {{ track(c,position=loop.index) }}
+          </a>
         {% endfor %}
       </div>
     </div>
@@ -125,6 +131,10 @@
       text-align: center;
       border-bottom: 3px solid #323544;
       width: 90%;
+    }
+
+    #curated .metrics p, h3 {
+      font-size: 0.9em;
     }
   </style>
 {% endblock %}
