@@ -231,7 +231,6 @@ search_result_message_builder = {
 # Output is streamed by using a generator function
 def search_results_for(query, stream=False):
     # when stream == True, we yield an <a/> for matches over 0.6
-    print("searching: " + query)
     if stream:
         for (k, v) in TEXTINDEX.items():
             match = SequenceMatcher(None, k.lower(), query.lower())

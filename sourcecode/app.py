@@ -196,7 +196,6 @@ def setlist_update(track):
         else:
             # Get the weight of the item to delete so we can reorganise the setlist
             curr_weight = current_setlist[track]['weight']
-            print(curr_weight)
             del current_setlist[track]
             # reorganise the setlist by decreasing the weight of every element that
             # was added before the one we're deleting
